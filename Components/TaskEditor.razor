@@ -16,15 +16,16 @@
         <InputTextArea class="form-control" @bind-Value="Model.Description" />
     </div>
 
-    <div class="mb-3">
-        <label>Due Date</label>
-        <InputDate class="form-control" @bind-Value="Model.Due" />
+    <div class="mb-3 d-flex gap-4">
+        <div>
+            <label>Due Date</label>
+            <InputDate DateTimeKind=1 class="" @bind-Value="Model.Due" />
+        </div>
+        <div>
+            <label>Due Time</label>
+            <input type="time" class="" @bind="@time" />
+        </div>
     </div>
-
-    @* <div class="mb-3">
-        <label>Due Time</label>
-        <InputTime class="form-control" @bind-Value="Model.Due" />
-    </div> *@
 
     <div class="mb-3">
         <label>Alert Before (optional)</label>
@@ -46,6 +47,9 @@
     [Parameter] public EventCallback<TaskItem> OnSave { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
 
+    private DateOnly? date;
+    private TimeOnly? time;
+
     private string? AlertBeforeString
     {
         get => Model.AlertBefore?.ToString();
@@ -54,12 +58,22 @@
 
     private async Task HandleSave()
     {
+        DateOnly date = DateOnly.FromDateTime(Model.Due);
+        Model.Due = new DateTime(date, time != null ? time.Value : new TimeOnly(0));
         await OnSave.InvokeAsync(Model);
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnParametersSetAsync()
     {
-        if (Model.Due == default(DateTime)) Model.Due = DateTime.Now;
-        await base.OnInitializedAsync();
+        if (Model.Due == default(DateTime))
+        {
+            Model.Due = DateTime.Now;
+        }
+        else
+        {
+            time = TimeOnly.FromDateTime(Model.Due);
+        }
+
+        return base.OnParametersSetAsync();
     }
 }
