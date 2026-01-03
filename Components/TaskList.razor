@@ -3,32 +3,57 @@
 @using TaskManagerBlazor.Layout
 @using TaskManagerBlazor.Models
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Due</th>
-            <th>Completed</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Items)
-        {
+<style>
+    table {
+        position: relative;
+        display: block;
+        max-block-size: 40vh;
+        overflow-x: auto;
+        overflow-y: auto;
+        white-space: nowrap;
+    }
+
+    tbody,
+    thead {
+        display: table;
+        width: 100%;
+    }
+
+    thead {
+        position: sticky;
+        top: 0;
+    }
+</style>
+
+<div class="table-responsive">
+
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@item.Title</td>
-                <td>@item.Due.ToString("g")</td>
-                <td>
-                    <input type="checkbox" checked="@item.Completed" disabled />
-                </td>
-                <td>
-                    <button class="btn btn-sm btn-secondary" @onclick="() => OnEdit.InvokeAsync(item)">Edit</button>
-                    <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(item)">Delete</button>
-                </td>
+                <th>Title</th>
+                <th>Due</th>
+                <th>Completed</th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Items)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Due.ToString("g")</td>
+                    <td>
+                        <input type="checkbox" checked="@item.Completed" disabled />
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => OnEdit.InvokeAsync(item)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(item)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 @code {
     [Parameter] public List<TaskItem> Items { get; set; } = new();
