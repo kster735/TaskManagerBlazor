@@ -7,21 +7,39 @@
     table {
         position: relative;
         display: block;
+        width: 100%;
         max-block-size: 40vh;
-        overflow-x: auto;
-        overflow-y: auto;
+        overflow: auto;
         white-space: nowrap;
     }
 
-    tbody,
-    thead {
-        display: table;
+
+    tbody {
         width: 100%;
     }
 
     thead {
         position: sticky;
+        width: 100%;
         top: 0;
+    }
+
+    tr,
+    th {
+        overflow-x: auto;
+    }
+
+    @@media (min-width: 560px) {
+
+        tbody,
+        thead {
+            display: table;
+        }
+
+        td,
+        th {
+            width: 25%;
+        }
     }
 </style>
 
