@@ -21,10 +21,10 @@
         <InputDate class="form-control" @bind-Value="Model.Due" />
     </div>
 
-    <div class="mb-3">
+    @* <div class="mb-3">
         <label>Due Time</label>
-        @* <InputTime class="form-control" @bind-Value="Model.Due" /> *@
-    </div>
+        <InputTime class="form-control" @bind-Value="Model.Due" />
+    </div> *@
 
     <div class="mb-3">
         <label>Alert Before (optional)</label>
@@ -42,7 +42,7 @@
 </EditForm>
 
 @code {
-    [Parameter] public TaskItem Model { get; set; } = new();
+    [Parameter] public TaskItem Model { get; set; } = new TaskItem();
     [Parameter] public EventCallback<TaskItem> OnSave { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
 
@@ -55,5 +55,11 @@
     private async Task HandleSave()
     {
         await OnSave.InvokeAsync(Model);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model.Due = DateTime.Now;
+        await base.OnInitializedAsync();
     }
 }
