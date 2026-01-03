@@ -1,0 +1,74 @@
+@page "/tasks"
+@using TaskManagerBlazor
+@using TaskManagerBlazor.Components
+@using TaskManagerBlazor.Layout
+@using TaskManagerBlazor.Models
+@using TaskManagerBlazor.Services
+@inject ITaskService TaskService
+
+<h3>Task Manager</h3>
+
+<button class="btn btn-primary" @onclick="CreateNew">New Task</button>
+
+<TaskList Items="Tasks" OnEdit="EditTask" OnDelete="DeleteTask" />
+
+@if (EditingTask is not null)
+{
+    <TaskEditor Model="EditingTask" OnSave="SaveTask" OnCancel="CancelEdit" />
+}
+
+@code {
+    private List<TaskItem> Tasks = new();
+    private TaskItem? EditingTask;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Tasks = await TaskService.GetAllAsync();
+    }
+
+    private void CreateNew()
+    {
+        EditingTask = new TaskItem();
+    }
+
+    private void EditTask(TaskItem item)
+    {
+        // Clone to avoid editing the list directly
+        EditingTask = new TaskItem
+        {
+            Title = item.Title,
+            Description = item.Description,
+            Completed = item.Completed,
+            Due = item.Due,
+            AlertBefore = item.AlertBefore
+        };
+    }
+
+    private async Task SaveTask(TaskItem item)
+    {
+        var existing = Tasks.FirstOrDefault(t => t.Title == item.Title);
+
+        if (existing is null)
+        {
+            await TaskService.AddAsync(item);
+        }
+        else
+        {
+            await TaskService.UpdateAsync(item);
+        }
+
+        Tasks = await TaskService.GetAllAsync();
+        EditingTask = null;
+    }
+
+    private async Task DeleteTask(TaskItem item)
+    {
+        await TaskService.DeleteAsync(item);
+        Tasks = await TaskService.GetAllAsync();
+    }
+
+    private void CancelEdit()
+    {
+        EditingTask = null;
+    }
+}

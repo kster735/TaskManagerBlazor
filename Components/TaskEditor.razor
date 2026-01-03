@@ -1,0 +1,59 @@
+@namespace TaskManagerBlazor.Components
+@using TaskManagerBlazor
+@using TaskManagerBlazor.Layout
+@using TaskManagerBlazor.Models
+
+<EditForm Model="Model" OnValidSubmit="HandleSave">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label>Title</label>
+        <InputText class="form-control" @bind-Value="Model.Title" />
+    </div>
+
+    <div class="mb-3">
+        <label>Description</label>
+        <InputTextArea class="form-control" @bind-Value="Model.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label>Due Date</label>
+        <InputDate class="form-control" @bind-Value="Model.Due" />
+    </div>
+
+    <div class="mb-3">
+        <label>Due Time</label>
+        @* <InputTime class="form-control" @bind-Value="Model.Due" /> *@
+    </div>
+
+    <div class="mb-3">
+        <label>Alert Before (optional)</label>
+        <InputText class="form-control" @bind-Value="AlertBeforeString" />
+        <small>Format: hh:mm:ss</small>
+    </div>
+
+    <div class="mb-3">
+        <label>Completed</label>
+        <InputCheckbox @bind-Value="Model.Completed" />
+    </div>
+
+    <button class="btn btn-success" type="submit">Save</button>
+    <button class="btn btn-secondary" type="button" @onclick="OnCancel">Cancel</button>
+</EditForm>
+
+@code {
+    [Parameter] public TaskItem Model { get; set; } = new();
+    [Parameter] public EventCallback<TaskItem> OnSave { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private string? AlertBeforeString
+    {
+        get => Model.AlertBefore?.ToString();
+        set => Model.AlertBefore = string.IsNullOrWhiteSpace(value) ? null : TimeSpan.Parse(value);
+    }
+
+    private async Task HandleSave()
+    {
+        await OnSave.InvokeAsync(Model);
+    }
+}

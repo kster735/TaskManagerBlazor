@@ -1,0 +1,37 @@
+@namespace TaskManagerBlazor.Components
+@using TaskManagerBlazor
+@using TaskManagerBlazor.Layout
+@using TaskManagerBlazor.Models
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Due</th>
+            <th>Completed</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Items)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.Due.ToString("g")</td>
+                <td>
+                    <input type="checkbox" checked="@item.Completed" disabled />
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-secondary" @onclick="() => OnEdit.InvokeAsync(item)">Edit</button>
+                    <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(item)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public List<TaskItem> Items { get; set; } = new();
+    [Parameter] public EventCallback<TaskItem> OnEdit { get; set; }
+    [Parameter] public EventCallback<TaskItem> OnDelete { get; set; }
+}
