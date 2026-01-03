@@ -59,7 +59,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Model.Due = DateTime.Now;
+        if (Model.Due == default(DateTime)) Model.Due = DateTime.Now;
         await base.OnInitializedAsync();
     }
 }
